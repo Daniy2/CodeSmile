@@ -1,0 +1,16 @@
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="48" height="48" fill="none"/>
+
+    <!-- Magnifying Glass Handle -->
+    <rect x="30" y="30" width="12" height="5" rx="2.5" transform="rotate(45 30 30)" fill="#4A90E2" stroke="#3B6FC4" stroke-width="1.5"/>
+
+    <!-- Magnifying Glass Circle -->
+    <circle cx="22" cy="22" r="16" fill="none" stroke="#4A90E2" stroke-width="3"/>
+    <circle cx="22" cy="22" r="13" fill="#B2E67E" stroke="none"/>
+
+    <!-- Smile Face -->
+    <circle cx="18" cy="18" r="2" fill="black"/>
+    <circle cx="26" cy="18" r="2" fill="black"/>
+    <path d="M18 24 Q22 28 26 24" stroke="black" stroke-width="2" fill="none"/>
+</svg>
