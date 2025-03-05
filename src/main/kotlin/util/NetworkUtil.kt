@@ -47,17 +47,33 @@ fun sendAnalysisRequest(projectPath: String?, resultsArea: JTextArea) {
                 // Mostra il messaggio e il percorso del file
                 resultsArea.append("Risultati dell'analisi:\n")
 
+                println("Api response : $apiResponse")
+                println("Api response message : ${apiResponse.message}")
+                println("Api response status : ${apiResponse.status}")
+                println("Api response output path : ${apiResponse.output_path}")
+
 
                 val csvFilePath = apiResponse.output_path // Percorso completo al file overview.csv
+                println("Csv file path: $csvFilePath")
 
-                // Chiama la funzione per formattare il CSV
-                val formattedResults = formatCsvToReadableText(csvFilePath)
 
-                // Aggiungi i risultati formattati all'area di testo
-                resultsArea.append(formattedResults)
-            } else {
-                resultsArea.append("Errore nella risposta del server.\n")
+
+
+
+                when (apiResponse.message) {
+                    "Analysis completed successfully, but no code smells were found. No CSV file generated." -> {
+                        resultsArea.append("No smells were found.")
+                    }
+                    "Analysis completed successfully" -> {
+                        resultsArea.append(formatCsvToReadableText(csvFilePath))
+                    }
+                    else -> {
+                        resultsArea.append("Errore nella risposta del server.\n")
+                    }
+                }
             }
         }
     })
 }
+
+
