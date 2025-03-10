@@ -16,7 +16,7 @@ def run_codesmile(input_directory, output_directory):
 
     # Non creare la cartella 'output' manualmente, lascia che 'cs-smile' lo faccia
     if not os.path.exists(output_directory):
-        print(f"Output directory does not exist. Creating {output_directory}")
+        print(f"Output directory does not exist. Creating {output_directory}", flush=True)
         os.makedirs(output_directory)  # Crea la cartella se non esiste
 
     # Verifica i permessi di scrittura
@@ -30,31 +30,31 @@ def run_codesmile(input_directory, output_directory):
     # Costruisci il comando CLI per CodeSmile
     command = f"python -m cli.cli_runner --input {input_directory} --output {output_directory}"
 
-    print(f"Running command: {command}")  # Log del comando eseguito
+    print(f"Running command: {command}",flush=True)  # Log del comando eseguito
 
     try:
         # Imposta la directory di lavoro su cs-smile e esegui il comando
         result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cs_smile_path)
 
         # Log dell'output del comando
-        print(f"Command output: {result.stdout.decode('utf-8')}")
-        print(f"Command error (if any): {result.stderr.decode('utf-8')}")
+        print(f"Command output: {result.stdout.decode('utf-8')}",flush=True)
+        print(f"Command error (if any): {result.stderr.decode('utf-8')}",flush=True)
 
         # Verifica se CodeSmile ha trovato code smells
         if "No code smells found" in result.stdout.decode('utf-8'):
-            print("No code smells found. Skipping the creation of overview.csv.")
+            print("No code smells found. Skipping the creation of overview.csv.",flush=True)
             return None
 
         # Verifica se il file 'overview.csv' è stato creato
         overview_file_path = os.path.join(output_directory, 'output', 'overview.csv')
         if not os.path.exists(overview_file_path):
-            print(f"Expected CSV file not found: {overview_file_path}")
+            print(f"Expected CSV file not found: {overview_file_path}",flush=True)
             return None
 
         return result.stdout.decode('utf-8')
 
     except subprocess.CalledProcessError as e:
-        print(f"Error during CodeSmile execution: {e.stderr.decode('utf-8')}")
+        print(f"Error during CodeSmile execution: {e.stderr.decode('utf-8')}",flush=True)
         return f"Error: {e.stderr.decode('utf-8')}"
 
 
@@ -65,9 +65,9 @@ def run_codesmile(input_directory, output_directory):
 def analyze():
     try:
         # Aggiungiamo log per vedere se la richiesta arriva al server
-        print("Received request to analyze project...")  # Log della richiesta ricevuta
+        print("Received request to analyze project...",flush=True)  # Log della richiesta ricevuta
         data = request.json
-        print(f"Request data: {data}")  # Log dei dati ricevuti nel corpo della richiesta
+        print(f"Request data: {data}",flush=True)  # Log dei dati ricevuti nel corpo della richiesta
 
         input_directory = data.get('input_directory')
         output_directory = data.get('output_directory')
@@ -75,12 +75,12 @@ def analyze():
         if not input_directory or not output_directory:
             return jsonify({"error": "Both input_directory and output_directory are required"}), 400
 
-        print(f"Input directory: {input_directory}")
-        print(f"Output directory: {output_directory}")
+        print(f"Input directory: {input_directory}", flush=True)
+        print(f"Output directory: {output_directory}",flush=True)
 
         # Verifica se la directory di input esiste
         if not os.path.exists(input_directory):
-            print(f"Input directory does not exist: {input_directory}")
+            print(f"Input directory does not exist: {input_directory}",flush=True)
             return jsonify({"error": "Input directory does not exist"}), 400
 
         # Esegui CodeSmile sul progetto
@@ -105,4 +105,4 @@ def analyze():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)  # Cambia da 0.0.0.0 a 127.0.0.1
+    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)

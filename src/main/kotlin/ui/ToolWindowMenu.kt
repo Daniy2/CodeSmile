@@ -5,6 +5,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
+import util.getCurrentFilePath
 import util.sendAnalysisRequest
 import java.io.File
 import java.io.IOException
@@ -29,52 +30,43 @@ private fun getPythonInterpreterPathFromVenv(projectRootPath: String): String {
 
 
 
-private fun startFlaskServer() {
+fun startFlaskServer() {
     try {
-        // Ottieni il percorso della root del progetto principale
         val projectRootPath = System.getenv("PROJECT_ROOT") ?: File(".").absolutePath
-        println("Percorso della root del progetto principale: $projectRootPath")
+        println("Percorso root: $projectRootPath")
 
-        // Verifica che il percorso sia valido
-        if (!File(projectRootPath).exists()) {
-            throw IOException("Il percorso del progetto principale non esiste: $projectRootPath")
+        val serverScriptPath = Paths.get(projectRootPath, "server", "server.py").toString()
+        if (!File(serverScriptPath).exists()) {
+            throw IOException("Server script non trovato: $serverScriptPath")
         }
 
-        // Combina il percorso del progetto con la cartella 'server' e 'server.py'
-        val serverScriptPath = Paths.get(projectRootPath, "server", "server.py").toString()
-        println("Percorso del server: $serverScriptPath")
-
-        // Ottieni il percorso dell'interprete Python dall'ambiente virtuale
         val pythonInterpreterPath = getPythonInterpreterPathFromVenv(projectRootPath)
-        println("Percorso dell'interprete Python: $pythonInterpreterPath")
+        println("Python interpreter: $pythonInterpreterPath")
 
-        // Costruisci il comando per eseguire Flask usando l'interprete specifico
-        val command = listOf(pythonInterpreterPath, serverScriptPath)
+        // Aggiungi "-u" per il flushing immediato
+        val command = listOf(pythonInterpreterPath, "-u", serverScriptPath)
+        println("Comando: ${command.joinToString(" ")}")
 
-        println("Command: ${command.joinToString(" ")}")
-
-        // Avvia il processo
         val processBuilder = ProcessBuilder(command)
-        processBuilder.redirectErrorStream(true)  // Unifica gli stream di errore e uscita
-
-        // Imposta la working directory del processo sulla root del progetto principale
+        processBuilder.redirectErrorStream(true)
         processBuilder.directory(File(projectRootPath))
 
-        // Avvia il processo
         val process = processBuilder.start()
-        println("Server Flask avviato...")
+        println("Server avviato...")
 
-        // Stampa l'output del server per debugging
+        // Stampa log con prefisso
         Executors.newSingleThreadExecutor().submit {
-            val reader = process.inputStream.bufferedReader()
-            reader.forEachLine { println(it) }
+            process.inputStream.bufferedReader().forEachLine { line ->
+                println("[SERVER] $line")
+            }
         }
 
     } catch (e: IOException) {
+        println("ERRORE: ${e.message}")
         e.printStackTrace()
-        println("Errore nell'avvio del server Flask.")
     }
 }
+
 
 
 class ToolWindowMenu : ToolWindowFactory {
@@ -96,11 +88,26 @@ class ToolWindowMenu : ToolWindowFactory {
         val analyzeButton = JButton("Analizza progetto")
         analyzeButton.addActionListener {
             // Chiamata alla funzione per inviare la richiesta di analisi
-            sendAnalysisRequest(project.basePath, resultsArea)  // Chiamata alla funzione di util
+            sendAnalysisRequest(project.basePath, resultsArea, false)  // Chiamata alla funzione di util
+        }
+
+        val currentFileButton = JButton("Analizza file corrente")
+        currentFileButton.addActionListener {
+
+            val currentFile = getCurrentFilePath(project)
+            if(currentFile != null) {
+                println("Percorso file corrente $currentFile")
+                sendAnalysisRequest(currentFile, resultsArea, true)
+
+            }else{
+                resultsArea.append("No file corrente yet")
+            }
+
         }
 
         // Aggiungi il pulsante e l'area di risultati al pannello
         panel.add(analyzeButton)
+        panel.add(currentFileButton)
         panel.add(scrollPane)
 
         // Aggiungi il pannello al ToolWindow

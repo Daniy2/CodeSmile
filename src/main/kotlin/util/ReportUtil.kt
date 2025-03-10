@@ -2,91 +2,70 @@ package util
 
 import com.opencsv.CSVReader
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileReader
+import java.io.IOException
+import java.nio.charset.Charset
 
 fun formatCsvToReadableText(csvPath: String?, projectPath: String?): String {
+    if (csvPath.isNullOrEmpty() || projectPath.isNullOrEmpty()) {
+        return  "Nessun code smell trovato"
+    }
+
+    val csvFile = File(csvPath)
+    if (!csvFile.exists()) {
+        return "File CSV non trovato: $csvPath"
+    }
+
     val formattedText = StringBuilder()
+    val projectRoot = File(projectPath).absolutePath
 
     try {
-        if (csvPath != null) {
-            // Ottieni il percorso della root del progetto
-            val projectRoot = File(".").absoluteFile.parent  // Ottieni la root directory del progetto
+        FileReader(csvFile, Charset.forName("UTF-8")).use { fileReader ->
+            CSVReader(fileReader).use { reader ->
+                reader.readNext() // Salta intestazione
 
-            // Calcola il percorso relativo rispetto alla root del progetto
-            val relativePath = File(csvPath).absolutePath.replace(projectRoot, "").replace("\\", "/")  // Normalizza il percorso
-            println("Percorso relativo: $relativePath")
+                var line: Array<String>?
+                while (reader.readNext().also { line = it } != null) {
+                    line?.let {
+                        val filename = it[0]
+                        val functionName = it[1]
+                        val smellName = it[2]
+                        val lineNum = it[3]
+                        val description = it[4]
 
-            // Usa try-with-resources per chiudere automaticamente il reader
-            FileReader(File(csvPath)).use { fileReader ->
-                CSVReader(fileReader).use { reader ->
-                    var line: Array<String>?
+                        val relativePath = filename.replace(projectRoot, "")
+                            .replace("\\", "/")
+                            .removePrefix("/") // Rimuove slash iniziale
 
-                    // Salta la prima riga (nomi delle colonne)
-                    reader.readNext()
-
-                    // Leggi ogni riga del CSV
-                    while (reader.readNext().also { line = it } != null) {
-                        val filename = line!![0]
-                        val functionName = line!![1]
-                        val smellName = line!![2]
-                        val lineNum = line!![3]
-                        val description = line!![4]
-
-                        // Mantieni la barra rovesciata nel percorso, e sostituiscila con il percorso relativo
-                        val relativeFilename = filename.replace(projectRoot, "").replace("\\", "/")  // Percorso relativo rispetto alla root del progetto
-
-                        // Formatta l'output per l'utente
-                        formattedText.append("Rilevato code smell di tipo \"$smellName\" nel file \"$relativeFilename\" nella funzione \"$functionName\" alla linea $lineNum. Descrizione: $description\n")
+                        formattedText.append(
+                            "Rilevato: $smellName\n" +
+                                    "File: $relativePath\n" +
+                                    "Funzione: $functionName\n" +
+                                    "Linea: $lineNum\n" +
+                                    "Descrizione: $description\n\n"
+                        )
                     }
                 }
             }
-        } else {
-            formattedText.append("No smells found\n")
         }
 
-        // Ottieni la directory del progetto e aggiungi la cartella OUTPUT
-         // Ottieni la root directory del progetto
-        val outputDirectory = File(projectPath, "OUTPUT")  // Combina il percorso del progetto con OUTPUT
-        val outputFolder = outputDirectory
+        // Pulizia directory OUTPUT
+        val outputFolder = File(projectPath, "OUTPUT")
+        cleanupOutputDirectory(outputFolder)
 
-        println("Percorso della cartella OUTPUT: ${outputFolder.absolutePath}")
+        return formattedText.toString().ifEmpty { "Nessun code smell trovato" }
 
-        if (outputFolder.exists() && outputFolder.isDirectory) {
-            Thread.sleep(500)  // Attendi 500ms per rilasciare le risorse
-            if (deleteFileOrFolder(outputFolder)) {
-                println("Cartella OUTPUT eliminata con successo.")
-            } else {
-                println("Impossibile eliminare la cartella OUTPUT.")
-            }
-        } else {
-            println("La cartella OUTPUT non esiste o non è una directory valida.")
-        }
-
-    } catch (e: Exception) {
-        e.printStackTrace()
+    } catch (e: FileNotFoundException) {
+        return "Errore: File CSV non trovato"
+    } catch (e: IOException) {
+        return "Errore durante la lettura del CSV: ${e.message}"
     }
-
-    return formattedText.toString()
 }
 
-
-
-// Funzione ricorsiva per eliminare una cartella e i suoi contenuti
-private fun deleteFileOrFolder(file: File): Boolean {
-    if (file.isDirectory) {
-        // Elimina ricorsivamente i contenuti della cartella
-        file.listFiles()?.forEach { child ->
-            if (!deleteFileOrFolder(child)) {
-                println("Impossibile eliminare: ${child.path}")
-                return false
-            }
-        }
-    }
-    // Tenta di eliminare il file o la cartella
-    return if (file.delete()) {
-        true
-    } else {
-        println("Impossibile eliminare: ${file.path}")
-        false
+private fun cleanupOutputDirectory(folder: File) {
+    if (folder.exists()) {
+        folder.deleteRecursively()
+        println("Cartella ${folder.path} eliminata")
     }
 }

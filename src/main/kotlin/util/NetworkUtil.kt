@@ -4,21 +4,31 @@ import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import java.io.IOException
 import javax.swing.JTextArea
 
 data class ApiResponse(val status: String, val message: String, val output_path: String)
 
-fun sendAnalysisRequest(projectPath: String?, resultsArea: JTextArea) {
+fun sendAnalysisRequest(projectPath: String?, resultsArea: JTextArea, singleFileMode: Boolean) {
     val client = OkHttpClient()
 
+    println("Modalità $singleFileMode")
     // Crea la richiesta JSON con il percorso del progetto
+    val outputDirectory = if (singleFileMode) {
+        File(projectPath).parentFile.resolve("\\\\OUTPUT").path
+    } else {
+        File(projectPath).resolve("\\\\OUTPUT").path
+    }
+
     val json = """
         {
             "input_directory": "$projectPath",
-            "output_directory": "$projectPath\\OUTPUT"
+            "output_directory": "$outputDirectory"
         }
     """.trimIndent()
+
+    println("Sending analysis request: $json")
 
     val body = json
         .toRequestBody("application/json".toMediaTypeOrNull())
@@ -44,7 +54,11 @@ fun sendAnalysisRequest(projectPath: String?, resultsArea: JTextArea) {
                 val apiResponse = Gson().fromJson(responseBody, ApiResponse::class.java)
 
                 // Mostra il messaggio e il percorso del file
-                resultsArea.append("Risultati dell'analisi:\n")
+                when(singleFileMode) {
+                    true -> resultsArea.append("Risultati dell'analisi sul file corrente:\n")
+                    else -> resultsArea.append("Risultati dell'analisi sul progetto:\n")
+                }
+
 
                 println("Api response : $apiResponse")
                 println("Api response message : ${apiResponse.message}")
