@@ -7,9 +7,9 @@ import java.io.FileReader
 import java.io.IOException
 import java.nio.charset.Charset
 
-fun formatCsvToReadableText(csvPath: String?, projectPath: String?): String {
+fun formatCsvToReadableText(csvPath: String?, projectPath: String?, singleFileMode: Boolean): String {
     if (csvPath.isNullOrEmpty() || projectPath.isNullOrEmpty()) {
-        return  "Nessun code smell trovato"
+        return  "Nessun code smell \n"
     }
 
     val csvFile = File(csvPath)
@@ -51,7 +51,15 @@ fun formatCsvToReadableText(csvPath: String?, projectPath: String?): String {
         }
 
         // Pulizia directory OUTPUT
-        val outputFolder = File(projectPath, "OUTPUT")
+
+        val outputFolder = if(!singleFileMode){
+
+            File(projectPath, "OUTPUT")
+        }else{
+            File(File(projectPath).parentFile, "OUTPUT")
+        }
+
+        println("Output folder: $outputFolder")
         cleanupOutputDirectory(outputFolder)
 
         return formattedText.toString().ifEmpty { "Nessun code smell trovato" }

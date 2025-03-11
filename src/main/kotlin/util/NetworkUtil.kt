@@ -16,9 +16,9 @@ fun sendAnalysisRequest(projectPath: String?, resultsArea: JTextArea, singleFile
     println("Modalità $singleFileMode")
     // Crea la richiesta JSON con il percorso del progetto
     val outputDirectory = if (singleFileMode) {
-        File(projectPath).parentFile.resolve("\\\\OUTPUT").path
+        File(File(projectPath).parentFile, "OUTPUT").toString().replace("\\", "\\\\")
     } else {
-        File(projectPath).resolve("\\\\OUTPUT").path
+        "$projectPath\\\\OUTPUT"
     }
 
     val json = """
@@ -71,11 +71,11 @@ fun sendAnalysisRequest(projectPath: String?, resultsArea: JTextArea, singleFile
 
                 when (apiResponse.message) {
                     "Analysis completed successfully, but no code smells were found. No CSV file generated." -> {
-                        resultsArea.append(formatCsvToReadableText(csvFilePath, projectPath))
+                        resultsArea.append(formatCsvToReadableText(csvFilePath, projectPath,singleFileMode))
 
                     }
                     "Analysis completed successfully" -> {
-                        resultsArea.append(formatCsvToReadableText(csvFilePath, projectPath))
+                        resultsArea.append(formatCsvToReadableText(csvFilePath, projectPath,singleFileMode))
                     }
                     else -> {
                         resultsArea.append("Errore nella risposta del server.\n")
