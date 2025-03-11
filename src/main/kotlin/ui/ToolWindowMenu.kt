@@ -27,7 +27,16 @@ private fun getPythonInterpreterPathFromVenv(projectRootPath: String): String {
     return interpreterPath
 }
 
-
+fun killPreviousProcesses() {
+    try {
+        // Esegui il comando taskkill per terminare il processo python che usa la porta 5000
+        val processBuilder = ProcessBuilder("taskkill", "/F", "/IM", "python.exe")
+        processBuilder.start().waitFor()  // Aspetta che il processo venga terminato
+        println("Previous Python processes terminated.")
+    } catch (e: Exception) {
+        println("Error killing previous processes: ${e.message}")
+    }
+}
 
 
 fun startFlaskServer() {
@@ -73,6 +82,7 @@ class ToolWindowMenu : ToolWindowFactory {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         // Avvia il server Flask automaticamente all'inizio
+        killPreviousProcesses()
         startFlaskServer() // Avvia il server al caricamento del plugin
 
         // Creazione del pannello principale
