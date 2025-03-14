@@ -54,10 +54,10 @@ fun sendAnalysisRequest(projectPath: String?, resultsArea: JTextArea, singleFile
                 val apiResponse = Gson().fromJson(responseBody, ApiResponse::class.java)
 
                 // Mostra il messaggio e il percorso del file
-                when(singleFileMode) {
-                    true -> resultsArea.append("Risultati dell'analisi sul file corrente:\n")
-                    else -> resultsArea.append("Risultati dell'analisi sul progetto:\n")
-                }
+//                when(singleFileMode) {
+//                    true -> resultsArea.append("Risultati dell'analisi sul file corrente:\n")
+//                    else -> resultsArea.append("Risultati dell'analisi sul progetto:\n")
+//                }
 
 
                 println("Api response : $apiResponse")

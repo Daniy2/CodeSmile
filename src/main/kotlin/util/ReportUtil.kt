@@ -9,6 +9,7 @@ import java.nio.charset.Charset
 
 fun formatCsvToReadableText(csvPath: String?, projectPath: String?, singleFileMode: Boolean): String {
     if (csvPath.isNullOrEmpty() || projectPath.isNullOrEmpty()) {
+        cleanupOutputDirectory(File(projectPath?.let { File(it).parentFile }, "OUTPUT"))
         return  "Nessun code smell \n"
     }
 
@@ -62,7 +63,7 @@ fun formatCsvToReadableText(csvPath: String?, projectPath: String?, singleFileMo
         println("Output folder: $outputFolder")
         cleanupOutputDirectory(outputFolder)
 
-        return formattedText.toString().ifEmpty { "Nessun code smell trovato" }
+        return formattedText.toString()
 
     } catch (e: FileNotFoundException) {
         return "Errore: File CSV non trovato"
