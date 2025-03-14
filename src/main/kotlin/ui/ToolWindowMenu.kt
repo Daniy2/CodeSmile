@@ -11,10 +11,9 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
 import java.util.concurrent.Executors
-import javax.swing.BoxLayout
-import javax.swing.JButton
-import javax.swing.JPanel
-import javax.swing.JTextArea
+import java.util.concurrent.TimeUnit
+import javax.swing.*
+import javax.swing.filechooser.FileNameExtensionFilter
 
 private fun getPythonInterpreterPathFromVenv(projectRootPath: String): String {
     // Cerca l'interprete Python nell'ambiente virtuale
@@ -98,6 +97,7 @@ class ToolWindowMenu : ToolWindowFactory {
         val analyzeButton = JButton("Analizza progetto")
         analyzeButton.addActionListener {
             // Chiamata alla funzione per inviare la richiesta di analisi
+            resultsArea.append("Analisi sul progetto:\n")
             sendAnalysisRequest(project.basePath, resultsArea, false)  // Chiamata alla funzione di util
         }
 
@@ -107,6 +107,7 @@ class ToolWindowMenu : ToolWindowFactory {
             val currentFile = getCurrentFilePath(project)
             if(currentFile != null) {
                 println("Percorso file corrente $currentFile")
+                resultsArea.append("Analisi sul file corrente:\n")
                 sendAnalysisRequest(currentFile, resultsArea, true)
 
             }else{
@@ -115,9 +116,81 @@ class ToolWindowMenu : ToolWindowFactory {
 
         }
 
+        val multipleFilesButton = JButton("Analizza più file")
+        multipleFilesButton.addActionListener {
+            // Ottieni la cartella di base del progetto
+            val projectBasePath = project.basePath ?: return@addActionListener
+
+            // Crea un JFileChooser per permettere la selezione di file
+            val fileChooser = JFileChooser(projectBasePath)
+            fileChooser.dialogTitle = "Seleziona file Python"
+
+            // Imposta il filtro per mostrare solo file .py
+            fileChooser.fileFilter = FileNameExtensionFilter("File Python", "py")
+
+            // Imposta la modalità di selezione su FILES_ONLY per permettere solo la selezione dei file
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY)
+
+            // Abilita la selezione multipla
+            fileChooser.isMultiSelectionEnabled = true
+
+            // Apri la finestra di selezione file
+            val returnValue = fileChooser.showOpenDialog(null)
+
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                // Ottieni i file selezionati
+                val selectedFiles = fileChooser.selectedFiles
+                val filesList = selectedFiles.map { it.absolutePath }.toList()
+
+                // Mostra un messaggio di conferma con i file selezionati
+                val message = "Sei sicuro di voler analizzare i seguenti file?\n" + filesList.joinToString("\n")
+                val response = JOptionPane.showConfirmDialog(null, message, "Conferma Analisi", JOptionPane.YES_NO_OPTION)
+
+                if (response == JOptionPane.YES_OPTION) {
+                    // Crea una cartella temporanea per i file
+                    val tempDir = File(project.basePath, "temp_files")
+                    if (!tempDir.exists()) {
+                        tempDir.mkdir()
+                    }
+
+                    // Copia i file selezionati nella cartella temporanea
+                    filesList.forEach { filePath ->
+                        val file = File(filePath)
+                        val destination = File(tempDir, file.name)
+                        file.copyTo(destination, overwrite = true)
+                    }
+
+                    // Formatta il percorso della directory temporanea
+                    val formattedTempDirPath = tempDir.absolutePath.replace(File.separator, "\\\\")
+                    val formattedOutputDirPath = File(tempDir, "OUTPUT").absolutePath.replace(File.separator, "\\\\")
+
+                    // Invia la richiesta di analisi al server con il percorso della cartella temporanea
+                    println("Sending analysis request: {")
+                    println("  \"input_directory\": \"$formattedTempDirPath\",")
+                    println("  \"output_directory\": \"$formattedOutputDirPath\"")
+                    println("}")
+
+                    // Chiama la funzione sendAnalysisRequest per analizzare i file selezionati (singleFileMode = false)
+                    resultsArea.append("Analisi su più file:\n")
+                    sendAnalysisRequest(formattedTempDirPath, resultsArea, false)
+
+                    // Usa un ScheduledExecutorService per ritardare l'eliminazione della cartella temporanea
+                    val scheduler = Executors.newSingleThreadScheduledExecutor()
+                    scheduler.schedule({
+                        // Dopo il ritardo, elimina la cartella temporanea
+                        if (tempDir.exists()) {
+                            tempDir.deleteRecursively()
+                            println("Cartella temporanea 'temp_files' eliminata con successo.")
+                        }
+                    }, 5, TimeUnit.SECONDS) // Ritardo di 5 secondi
+                }
+            }
+        }
+
         // Aggiungi il pulsante e l'area di risultati al pannello
         panel.add(analyzeButton)
         panel.add(currentFileButton)
+        panel.add(multipleFilesButton)
         panel.add(scrollPane)
 
         // Aggiungi il pannello al ToolWindow
