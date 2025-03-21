@@ -1,4 +1,4 @@
-package util
+package csplugin.util
 
 import com.google.gson.Gson
 import okhttp3.*

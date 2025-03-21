@@ -1,4 +1,4 @@
-package util
+package csplugin.util
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project

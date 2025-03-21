@@ -1,14 +1,14 @@
-package listeners
+package csplugin.listeners
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
-import ui.ToolWindowMenu
+import csplugin.ui.ToolWindowMenu
 import java.io.File
 import java.nio.file.*
 import javax.swing.JButton
 import javax.swing.JTextArea
 import javax.swing.SwingUtilities
-import util.sendAnalysisRequest
+import csplugin.util.sendAnalysisRequest
 
 class RealTimeDetectionListener(
     private val project: Project,

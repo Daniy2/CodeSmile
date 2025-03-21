@@ -1,12 +1,12 @@
-package ui
+package csplugin.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
-import util.getCurrentFilePath
-import util.sendAnalysisRequest
+import csplugin.util.getCurrentFilePath
+import csplugin.util.sendAnalysisRequest
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
@@ -14,7 +14,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
-import listeners.RealTimeDetectionListener
+import csplugin.listeners.RealTimeDetectionListener
 
 private fun getPythonInterpreterPathFromVenv(projectRootPath: String): String {
     // Cerca l'interprete Python nell'ambiente virtuale

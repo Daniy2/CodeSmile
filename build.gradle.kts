@@ -1,6 +1,5 @@
 plugins {
-    id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.8.0"
+    kotlin("jvm") version "1.8.0"
     id("org.jetbrains.intellij") version "1.17.4"
 }
 
@@ -12,9 +11,12 @@ repositories {
 }
 
 dependencies {
-    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.2")
     implementation("com.opencsv:opencsv:5.6")
-    implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("org.openjfx:javafx-controls:17.0.14")
+    implementation("org.openjfx:javafx-fxml:17.0.14")  // Opzionale, se usi FXML
+
 }
 
 // Configure Gradle IntelliJ Plugin
