@@ -90,10 +90,8 @@ class RealTimeDetectionListener(
                         if (fullPath.toString().endsWith(".py") && kind == StandardWatchEventKinds.ENTRY_MODIFY) {
                             // Aggiungi un controllo di debouncing per evitare eventi ripetuti in tempi brevi
                             val currentTime = System.currentTimeMillis()
-                            if (currentTime - lastModifiedTime > 500) { // Aspetta almeno 500 ms tra modifiche
+                            if (currentTime - lastModifiedTime > 300) { // Ridotto da 500 ms a 300 ms
                                 println("File modificato: $fullPath")
-
-                                // Invia la richiesta di analisi ogni volta che viene modificato un file .py
                                 sendRealTimeAnalysisRequest(fullPath.toString())
                                 lastModifiedTime = currentTime
                             }
@@ -115,12 +113,21 @@ class RealTimeDetectionListener(
     }
 
     private fun sendRealTimeAnalysisRequest(filePath: String) {
-        // Invia la richiesta di analisi per il file modificato
         SwingUtilities.invokeLater {
+            resultsArea.text = ""
             resultsArea.append("Analisi in corso sul file: $filePath\n")
         }
 
-        // Riutilizziamo la funzione sendAnalysisRequest per inviare la richiesta
-        sendAnalysisRequest(project.basePath, resultsArea, true)  // singolo file
+        // Simula un aggiornamento immediato dell'interfaccia
+        resultsArea.repaint()
+
+        // Invia la richiesta di analisi
+        try {
+            sendAnalysisRequest(project.basePath, resultsArea, true)
+        } catch (e: Exception) {
+            SwingUtilities.invokeLater {
+                resultsArea.append("Errore durante l'analisi: ${e.message}\n")
+            }
+        }
     }
 }
