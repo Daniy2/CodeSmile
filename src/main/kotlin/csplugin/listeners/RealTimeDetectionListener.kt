@@ -113,18 +113,20 @@ class RealTimeDetectionListener(
     }
 
     private fun sendRealTimeAnalysisRequest(filePath: String) {
+        // Aggiungi un messaggio di avvio nell'area dei risultati
         SwingUtilities.invokeLater {
+            println("Aggiornamento dell'interfaccia utente...")
             resultsArea.text = ""
-            resultsArea.append("Analisi in corso sul file: $filePath\n")
+            resultsArea.append("Analisi in corso")
         }
-
-        // Simula un aggiornamento immediato dell'interfaccia
-        resultsArea.repaint()
 
         // Invia la richiesta di analisi
         try {
+            println("Invio della richiesta di analisi...")
             sendAnalysisRequest(project.basePath, resultsArea, true)
+            println("Richiesta di analisi inviata.")
         } catch (e: Exception) {
+            println("Errore durante l'invio della richiesta: ${e.message}")
             SwingUtilities.invokeLater {
                 resultsArea.append("Errore durante l'analisi: ${e.message}\n")
             }
