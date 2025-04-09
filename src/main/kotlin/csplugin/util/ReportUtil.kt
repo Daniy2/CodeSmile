@@ -5,7 +5,13 @@ import java.io.File
 
 fun formatCsvToReadableText(csvPath: String?, projectPath: String?, singleFileMode: Boolean): String {
     if (csvPath.isNullOrEmpty() || projectPath.isNullOrEmpty()) {
-        cleanupOutputDirectory(File(projectPath?.let { File(it).parentFile }, "OUTPUT"))
+
+        val file = if(!singleFileMode) {
+            File(projectPath, "OUTPUT")
+        }else
+            File(projectPath?.let { File(it).parentFile }, "OUTPUT")
+        print("File ---> $file")
+        cleanupOutputDirectory(file)
         return "Nessun code smell \n"
     }
 
