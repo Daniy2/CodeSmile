@@ -14,8 +14,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.2")
     implementation("com.opencsv:opencsv:5.6")
     implementation("com.google.code.gson:gson:2.8.9")
-    implementation("org.openjfx:javafx-controls:17.0.14")
-    implementation("org.openjfx:javafx-fxml:17.0.14")  // Opzionale, se usi FXML
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.8.0")
 
 }
 

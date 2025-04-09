@@ -1,16 +1,12 @@
 package csplugin.util
 
-import com.opencsv.CSVReader
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileReader
-import java.io.IOException
-import java.nio.charset.Charset
 
 fun formatCsvToReadableText(csvPath: String?, projectPath: String?, singleFileMode: Boolean): String {
     if (csvPath.isNullOrEmpty() || projectPath.isNullOrEmpty()) {
         cleanupOutputDirectory(File(projectPath?.let { File(it).parentFile }, "OUTPUT"))
-        return  "Nessun code smell \n"
+        return "Nessun code smell \n"
     }
 
     val csvFile = File(csvPath)
@@ -22,41 +18,40 @@ fun formatCsvToReadableText(csvPath: String?, projectPath: String?, singleFileMo
     val projectRoot = File(projectPath).absolutePath
 
     try {
-        FileReader(csvFile, Charset.forName("UTF-8")).use { fileReader ->
-            CSVReader(fileReader).use { reader ->
-                reader.readNext() // Salta intestazione
+        // Usa kotlin-csv per leggere il file
+        val rows = csvReader().readAll(csvFile)
 
-                var line: Array<String>?
-                while (reader.readNext().also { line = it } != null) {
-                    line?.let {
-                        val filename = it[0]
-                        val functionName = it[1]
-                        val smellName = it[2]
-                        val lineNum = it[3]
-                        val description = it[4]
+        // Salta la riga di intestazione
+        for (row in rows.drop(1)) {
+            val rawFilename = row[0]
+            println("Raw filename from CSV: $rawFilename") // Debug: Verifica il valore grezzo
 
-                        val relativePath = filename.replace(projectRoot, "")
-                            .replace("\\", "/")
-                            .removePrefix("/") // Rimuove slash iniziale
+            val normalizedFilename = rawFilename.replace("\\", "/")
+            println("Normalized filename: $normalizedFilename") // Debug: Verifica il valore normalizzato
 
-                        formattedText.append(
-                            "Rilevato: $smellName\n" +
-                                    "File: $relativePath\n" +
-                                    "Funzione: $functionName\n" +
-                                    "Linea: $lineNum\n" +
-                                    "Descrizione: $description\n\n"
-                        )
-                    }
-                }
-            }
+            val functionName = row[1]
+            val smellName = row[2]
+            val lineNum = row[3]
+            val description = row[4]
+
+            // Calcola il percorso relativo
+            val relativePath = normalizedFilename.replace(projectRoot, "")
+                .replace(""""\\"""", "/")
+                .removePrefix("/") // Rimuove slash iniziale
+
+            formattedText.append(
+                "Rilevato: $smellName\n" +
+                        "File: $relativePath\n" +
+                        "Funzione: $functionName\n" +
+                        "Linea: $lineNum\n" +
+                        "Descrizione: $description\n\n"
+            )
         }
 
         // Pulizia directory OUTPUT
-
-        val outputFolder = if(!singleFileMode){
-
+        val outputFolder = if (!singleFileMode) {
             File(projectPath, "OUTPUT")
-        }else{
+        } else {
             File(File(projectPath).parentFile, "OUTPUT")
         }
 
@@ -65,12 +60,11 @@ fun formatCsvToReadableText(csvPath: String?, projectPath: String?, singleFileMo
 
         return formattedText.toString()
 
-    } catch (e: FileNotFoundException) {
-        return "Errore: File CSV non trovato"
-    } catch (e: IOException) {
+    } catch (e: Exception) {
         return "Errore durante la lettura del CSV: ${e.message}"
     }
 }
+
 
 private fun cleanupOutputDirectory(folder: File) {
     if (folder.exists()) {
