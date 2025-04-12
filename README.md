@@ -17,6 +17,27 @@ It statically analyzes code to identify implementation patterns that may lead to
 
 ---
 
+## 📦 Prerequisites
+
+Before installing or running CodeSmile, make sure you have the following:
+
+### 🐍 Python Environment
+- Python **3.12.x** is required
+- If you don't have, you can download at https://www.python.org/downloads/release/python-3120/ 
+
+### 💡 IntelliJ IDEA Setup (for plugin mode)
+If you're using CodeSmile via IntelliJ as a plugin, make sure the following plugins are installed:
+
+- ✅ **Python** plugin  
+- ✅ **Gradle** (usually bundled with IntelliJ)  
+- ✅ **Plugin DevKit**
+
+You can install these from **Settings → Plugins**, then search and enable them.
+
+> ℹ️ CodeSmile has been tested primarily with **IntelliJ IDEA Community Edition 2023.3+** and **PyCharm 2023+**.
+
+---
+
 ## 🎛️ Detection Modes
 
 CodeSmile offers four detection modes, depending on your workflow or use case:
@@ -26,6 +47,7 @@ CodeSmile offers four detection modes, depending on your workflow or use case:
 - 🏗️ **Full Project Detection** – Scan an entire directory/project recursively
 - ⚡ **Real-Time Detection** – Live detection during coding via the IDE plugin (PyCharm)
 
+---
 
 ## 🔍 Supported Code Smells
 
@@ -54,17 +76,23 @@ CodeSmile currently detects the following ML-CSs:
 git clone https://github.com/Daniy2/CodeSmile.git
 cd CodeSmile
 ```
+
 2. (Optional) Create a virtual environment:
-   
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # on Windows: .venv\Scripts\activate
 ```
+
 3. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
-⚙️ Usage 
+
+---
+
+## ⚙️ Usage 
 
 ### 🧪 Running the Plugin from IntelliJ (Gradle)
 
@@ -76,19 +104,12 @@ To launch CodeSmile as a JetBrains plugin:
 
 ![Gradle run configuration](./gradle_conf.png)
 
-
-
 Once configured, hit ▶️ **Run Plugin** to launch the IDE with the plugin installed.
 
 ### 📂 Run the plugin on your project
 
 1. Open your projects in the IDE
-2. Click the tool window menu in Pycharm called "Code Smile" (to help you to search, see the photo below):
+2. Click the tool window menu in Pycharm called "Code Smile" (to help you to search, see the photo below)
 3. Select the detection modes you prefer and enjoy
 
 ![CS-Tool Window](./csToolWindow.png)
-
-
-
-
-
