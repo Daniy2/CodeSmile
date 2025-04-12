@@ -42,5 +42,17 @@ CodeSmile currently detects the following ML-CSs:
 
 ```bash
 git clone https://github.com/Daniy2/CodeSmile.git
-cd CodeSmile 
+cd CodeSmile
+```
+2. (Optional) Create a virtual environment:
+   
+```bash
+python -m venv .venv
+source .venv/bin/activate  # on Windows: .venv\Scripts\activate
+```
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
 
