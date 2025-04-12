@@ -86,6 +86,9 @@ Once configured, hit ▶️ **Run Plugin** to launch the IDE with the plugin ins
 2. Click the tool window menu in Pycharm called "Code Smile" (to help you to search, see the photo below):
 3. Select the detection modes you prefer and enjoy
 
+![CS-Tool Window](./CsToolWindow.png)
+
+
 
 
 
