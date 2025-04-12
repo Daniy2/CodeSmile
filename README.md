@@ -17,6 +17,16 @@ It statically analyzes code to identify implementation patterns that may lead to
 
 ---
 
+## 🎛️ Detection Modes
+
+CodeSmile offers four detection modes, depending on your workflow or use case:
+
+- 📄 **Single File Detection** – Analyze a specific Python file
+- 🗂️ **Multiple Files Detection** – Analyze a selected set of files in a batch
+- 🏗️ **Full Project Detection** – Scan an entire directory/project recursively
+- ⚡ **Real-Time Detection** – Live detection during coding via the IDE plugin (PyCharm)
+
+
 ## 🔍 Supported Code Smells
 
 CodeSmile currently detects the following ML-CSs:
@@ -54,5 +64,28 @@ source .venv/bin/activate  # on Windows: .venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
+⚙️ Usage 
+
+### 🧪 Running the Plugin from IntelliJ (Gradle)
+
+To launch CodeSmile as a JetBrains plugin:
+
+1. Make sure your `Gradle` task is configured to run `runIde`
+2. Set the environment variable `PROJECT_ROOT` to your project root (usually auto-filled)
+3. You can use the provided run configuration file, or set it up manually like this:
+
+![Gradle run configuration](./gradle_conf.png)
+
+
+
+Once configured, hit ▶️ **Run Plugin** to launch the IDE with the plugin installed.
+
+### 📂 Run the plugin on your project
+
+1. Open your projects in the IDE
+2. Click the tool window menu in Pycharm called "Code Smile" (to help you to search, see the photo below):
+3. Select the detection modes you prefer and enjoy
+
+
 
 
