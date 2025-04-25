@@ -108,6 +108,43 @@ Once configured, hit ▶️ **Run Plugin** to launch the IDE with the plugin ins
 
 ### 📂 Run the plugin on your project
 
+## ❗ Troubleshooting – Common Issues with Gradle and IntelliJ Plugin
+
+Sometimes, IntelliJ Plugin tasks like `runIde` may fail due to Gradle caching or class loader errors.
+Here are some quick solutions:
+
+### ❌ Error Example
+```
+Class 'org.jetbrains.intellij.tasks.InitializeIntelliJPluginTask' not found
+```
+or
+```
+Could not load the value of field `jvmArgumentProviders`
+```
+
+### ✅ Solution Steps
+
+1. **Close IntelliJ completely**
+2. **Clean the project and Gradle cache**:
+   ```bash
+   ./gradlew clean --refresh-dependencies
+   ```
+3. **Delete Gradle caches and temp resolver files manually** (Windows):
+   - `C:\Users\<user>\AppData\Local\Temp\ijresolvers*.gradle`
+   - `C:\Users\<user>\.gradle\caches`
+4. **Verify JDK version** (e.g., Java 17+ is recommended)
+5. **Ensure Gradle and plugin versions are compatible**:
+   - Gradle 8.x
+   - IntelliJ Plugin `org.jetbrains.intellij` version `1.13.3` or newer
+
+6. Restart IntelliJ and try again:
+   ```bash
+   ./gradlew runIde
+   ```
+
+> 💡 If the issue persists, run with `--stacktrace` to see detailed logs and open an issue.
+
+
 1. Open your projects in the IDE
 2. Click the tool window menu in Pycharm called "Code Smile" (to help you to search, see the photo below)
 3. Select the detection modes you prefer and enjoy
