@@ -108,6 +108,12 @@ Once configured, hit ▶️ **Run Plugin** to launch the IDE with the plugin ins
 
 ### 📂 Run the plugin on your project
 
+1. Open your projects in the IDE
+2. Click the tool window menu in Pycharm called "Code Smile" (to help you to search, see the photo below)
+3. Select the detection modes you prefer and enjoy
+
+![CS-Tool Window](./csToolWindow.png)
+
 ## ❗ Troubleshooting – Common Issues with Gradle and IntelliJ Plugin
 
 Sometimes, IntelliJ Plugin tasks like `runIde` may fail due to Gradle caching or class loader errors.
@@ -143,10 +149,3 @@ Could not load the value of field `jvmArgumentProviders`
    ```
 
 > 💡 If the issue persists, run with `--stacktrace` to see detailed logs and open an issue.
-
-
-1. Open your projects in the IDE
-2. Click the tool window menu in Pycharm called "Code Smile" (to help you to search, see the photo below)
-3. Select the detection modes you prefer and enjoy
-
-![CS-Tool Window](./csToolWindow.png)
