@@ -79,7 +79,7 @@ fun sendAnalysisRequest(projectPath: String?, resultsArea: JTextArea, singleFile
                 }
 
                 // Aggiungi il tempo impiegato anche nei risultati visualizzati
-                resultsArea.append("\nTempo impiegato per la detection: ${"%.2f".format(elapsedTimeInSeconds)} secondi\n")
+                resultsArea.append("\nDetection lasted : ${"%.2f".format(elapsedTimeInSeconds)} mins\n")
             }
         }
     })

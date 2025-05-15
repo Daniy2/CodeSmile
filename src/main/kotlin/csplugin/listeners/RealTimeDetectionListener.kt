@@ -46,7 +46,7 @@ class RealTimeDetectionListener(
         if (!isRealTimeActive) return // Se la modalità non è attiva, non fare nulla
 
         // Ripristina il pulsante al colore originale
-        realTimeButton.text = "Attiva modalità di detection real-time"
+        realTimeButton.text = "Start real time detection"
         realTimeButton.background = JBColor.GREEN
         realTimeButton.foreground = JBColor.BLACK  // Imposta il colore del testo
 
@@ -117,7 +117,7 @@ class RealTimeDetectionListener(
         SwingUtilities.invokeLater {
             println("Aggiornamento dell'interfaccia utente...")
             resultsArea.text = ""
-            resultsArea.append("Analisi in corso")
+            resultsArea.append("Running real time analysis...")
         }
 
         // Invia la richiesta di analisi

@@ -46,11 +46,11 @@ fun formatCsvToReadableText(csvPath: String?, projectPath: String?, singleFileMo
                 .removePrefix("/") // Rimuove slash iniziale
 
             formattedText.append(
-                "Rilevato: $smellName\n" +
+                "Found: $smellName\n" +
                         "File: $relativePath\n" +
-                        "Funzione: $functionName\n" +
-                        "Linea: $lineNum\n" +
-                        "Descrizione: $description\n\n"
+                        "Function: $functionName\n" +
+                        "Line: $lineNum\n" +
+                        "Description: $description\n\n"
             )
         }
 

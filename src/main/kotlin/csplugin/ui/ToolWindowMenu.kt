@@ -90,7 +90,7 @@ class ToolWindowMenu : ToolWindowFactory {
 
     private val allButtons = mutableListOf<JButton>()
     private val realTimeButton = createStyledButton(
-        "Attiva modalità di detection real-time",
+        "Start real time detection ",
         JBColor(Color(76, 175, 80), Color(76, 175, 80)) // Verde per entrambi i temi
     )
 
@@ -119,22 +119,22 @@ class ToolWindowMenu : ToolWindowFactory {
         buttonPanel.background = JBColor(Color(46, 46, 46), Color(30, 30, 30)) // Sfondo grigio scuro compatibile con temi chiaro/scuro
 
         val analyzeButton = createStyledButton(
-            "Analizza progetto",
+            "Full project analysis",
             JBColor(Color(33, 150, 243), Color(33, 150, 243)) // Blu per entrambi i temi
         )
         val currentFileButton = createStyledButton(
-            "Analizza file corrente",
+            "Current file analysis",
             JBColor(Color(255, 152, 0), Color(255, 152, 0)) // Arancione per entrambi i temi
         )
         val multipleFilesButton = createStyledButton(
-            "Analizza più file",
+            "Multiples file analysis",
             JBColor(Color(156, 39, 176), Color(156, 39, 176)) // Viola per entrambi i temi
         )
 
         // Aggiungi azioni ai pulsanti
         analyzeButton.addActionListener {
             resultsArea.text = ""
-            resultsArea.append("Analisi sul progetto:\n")
+            resultsArea.append("Analysis on project:\n")
             sendAnalysisRequest(project.basePath, resultsArea, false)
         }
 
@@ -142,7 +142,7 @@ class ToolWindowMenu : ToolWindowFactory {
             resultsArea.text = ""
             val currentFile = getCurrentFilePath(project)
             if (currentFile != null) {
-                resultsArea.append("Analisi sul file corrente:\n")
+                resultsArea.append("Current file analysis:\n")
                 sendAnalysisRequest(currentFile, resultsArea, true)
             } else {
                 resultsArea.append("No file corrente yet\n")
@@ -152,7 +152,7 @@ class ToolWindowMenu : ToolWindowFactory {
         multipleFilesButton.addActionListener {
             val projectBasePath = project.basePath ?: return@addActionListener
             val fileChooser = JFileChooser(projectBasePath)
-            fileChooser.dialogTitle = "Seleziona file Python"
+            fileChooser.dialogTitle = "Choose python files"
             fileChooser.fileFilter = FileNameExtensionFilter("File Python", "py")
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY)
             fileChooser.isMultiSelectionEnabled = true
@@ -160,7 +160,7 @@ class ToolWindowMenu : ToolWindowFactory {
 
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 val selectedFiles = fileChooser.selectedFiles.map { it.absolutePath }.toList()
-                val message = "Sei sicuro di voler analizzare i seguenti file?\n" + selectedFiles.joinToString("\n")
+                val message = "Are you sure about your choise?\n" + selectedFiles.joinToString("\n")
                 val response = JOptionPane.showConfirmDialog(null, message, "Conferma Analisi", JOptionPane.YES_NO_OPTION)
 
                 if (response == JOptionPane.YES_OPTION) {
@@ -178,7 +178,7 @@ class ToolWindowMenu : ToolWindowFactory {
 
 
                     resultsArea.text = ""
-                    resultsArea.append("Analisi sui file selezionati:\n")
+                    resultsArea.append("Select files analysis:\n")
                     sendAnalysisRequest(formattedTempDirPath, resultsArea, false)
                     val scheduler = Executors.newSingleThreadScheduledExecutor()
                     scheduler.schedule({
