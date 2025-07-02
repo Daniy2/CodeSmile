@@ -12,7 +12,7 @@ function onFormSubmit(e) {
 
   // Conta le righe con Fase 1 già assegnata
   const assignedCount = sheet.getRange(2, f1Col, lastRow - 1).getValues()
-    .filter(row => row[0] !== "").length;
+      .filter(row => row[0] !== "").length;
 
   const participantIndex = assignedCount % 4;
 
@@ -26,13 +26,13 @@ function onFormSubmit(e) {
 
   const zipLinks = {
 
-    "T1": "https://drive.google.com/uc?export=download&id=1GznJnDyxanUq9rNzkqd0DnFZDNo7SLWY",
-    "T2": "https://drive.google.com/uc?export=download&id=1sDFxI1tJfzGjTgHMrdJS8GeVZuqAdPXu",
-    "M1": "https://drive.google.com/uc?export=download&id=1Z_17u5pcaofcdhHM-4InP0vXUdTGrtIU",
-    "M2": "https://drive.google.com/uc?export=download&id=10NJT6KxjM8DX5-kIkZB1Q1I-2EiqjR-n"
+    "T1": "https://drive.google.com/uc?export=download&id=1RGQpSAIWXimd3Hj1blq1h_EPeUHo7mb3",
+    "T2": "https://drive.google.com/uc?export=download&id=1DnsWq3PO3p2z5HIGw1P55lwwEgQ8xK30",
+    "M1": "https://drive.google.com/uc?export=download&id=1jVRgF5ZonzEk1SoiVYzvbWl56eIK57kV",
+    "M2": "https://drive.google.com/uc?export=download&id=1LISbkXTyrF7rkLhDpjC5InplE9poo7Xb"
   };
 
-   const evaluationLinksByAssignment = {
+  const evaluationLinksByAssignment = {
     0: "https://docs.google.com/forms/d/e/1FAIpQLSchRp-R1IBtY6poJUQxWlGKtIDzNeFY6Je5pkuFDQRbhgoHFQ/viewform?usp=dialog",  // P1: T1 → M2
     1: "https://docs.google.com/forms/d/e/1FAIpQLScUZK_C3LL5KFqu6ljs-ggwFHk9i5n6_iE5FksC1ZiembaUvQ/viewform?usp=dialog",  // P2: M1 → T2
     2: "https://docs.google.com/forms/d/e/1FAIpQLSc0FzQRj-3TbEGGULnhm8ZWJEDJlLZB5adVx_Yp4h3XHnRvGw/viewform?usp=dialog",  // P3: T2 → M1
@@ -48,12 +48,12 @@ function onFormSubmit(e) {
 
   // Scrivi nel foglio
   if (order === "Tool → Manual") {
-  sheet.getRange(lastRow, f1Col).setValue(toolSet);
-  sheet.getRange(lastRow, f2Col).setValue(manualSet);
-} else {
-  sheet.getRange(lastRow, f1Col).setValue(manualSet);
-  sheet.getRange(lastRow, f2Col).setValue(toolSet);
-}
+    sheet.getRange(lastRow, f1Col).setValue(toolSet);
+    sheet.getRange(lastRow, f2Col).setValue(manualSet);
+  } else {
+    sheet.getRange(lastRow, f1Col).setValue(manualSet);
+    sheet.getRange(lastRow, f2Col).setValue(toolSet);
+  }
 
   // Email body
   const bodyHtml = `Ciao ${nome},<br><br>
